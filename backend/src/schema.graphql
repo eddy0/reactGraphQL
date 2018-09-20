@@ -1,0 +1,9 @@
+
+type Mutation {
+    id: ID!,
+    name: String!,
+}
+type Query {
+    id: ID!,
+    name: String!,
+}
