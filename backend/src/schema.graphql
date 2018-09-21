@@ -1,9 +1,8 @@
 
 type Mutation {
-    id: ID!,
-    name: String!,
+    createItem(title: String, ): Item!
 }
+
 type Query {
-    id: ID!,
-    name: String!,
+    dogs: [Dog!]
 }
