@@ -9,7 +9,7 @@ import {perPage} from '../config'
 
 
 export const ALL_ITEMS_QUERY = gql`
-    query ALL_ITEMS_QUERY ($first: Int = ${perPage}) {
+    query ALL_ITEMS_QUERY ($skip: Int, $first: Int = ${perPage}) {
         items (first: $first, skip: $skip, orderBy:createdAt_DESC ) {
             id
             title
