@@ -52,8 +52,12 @@ class CreateItem extends Component {
         e.preventDefault()
         const res = await createItem()
        
-        Router.push(`/item/${res.data.createItem.id}`)
-    
+        Router.push({
+            pathname: '/item',
+            query: {
+                id: res.data.createItem.id
+            }
+        })
     }
     
     uploadFile = async (e) => {

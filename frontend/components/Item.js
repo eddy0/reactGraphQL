@@ -59,7 +59,12 @@ class Item extends Component {
                             <ItemStyles>
                                 {
                                     item.image &&
-                                    <img src={item.image} alt={item.title} />
+                                    <Link href={{pathname: '/item', query: {id: item.id}}}>
+                                        <a >
+                                        <img src={item.image} alt={item.title} />
+                                        </a>
+                                    </Link>
+                                    
                                 }
                                 <Title>
                                     <Link href={{pathname: '/item', query: {id: item.id}}}>

@@ -3,12 +3,14 @@ import {Query} from 'react-apollo'
 import gql from 'graphql-tag'
 import styled from 'styled-components'
 import Item from './Item'
+import Pagination from './Pagination'
+import {perPage} from '../config'
 
 
 
 export const ALL_ITEMS_QUERY = gql`
-    query ALL_ITEMS_QUERY {
-        items {
+    query ALL_ITEMS_QUERY ($first: Int = ${perPage}) {
+        items (first: $first, skip: $skip, orderBy:createdAt_DESC ) {
             id
             title
             price
@@ -34,27 +36,33 @@ const ItemsList = styled.div`
 
 class Items extends Component {
     render() {
+        const page = this.props.page
         return (
             <Center>
-                <Query query={ALL_ITEMS_QUERY}>
-                    {
-                        ({data, error, loading}) => {
-                            if (loading) {
-                                return <p>Loading...</p>
-                            }
-                            if (error) {
-                                return <p>Eorro... {error.message}</p>
-                            }
-                            return (<ItemsList>
-                                {
-                                    data.items.map((item) => {
-                                        return <Item key={item.id} item={item}/>
-                                    })
+                <Pagination page={page} />
+                    <Query query={ALL_ITEMS_QUERY} variables={{
+                        skip: perPage * page - perPage,
+                        first: perPage
+                    }}>
+                        {
+                            ({data, error, loading}) => {
+                                if (loading) {
+                                    return <p>Loading...</p>
                                 }
-                            </ItemsList>)
+                                if (error) {
+                                    return <p>Eorro... {error.message}</p>
+                                }
+                                return (<ItemsList>
+                                    {
+                                        data.items.map((item) => {
+                                            return <Item key={item.id} item={item} />
+                                        })
+                                    }
+                                </ItemsList>)
+                            }
                         }
-                    }
-                </Query>
+                    </Query>
+             
             </Center>
         )
     }
