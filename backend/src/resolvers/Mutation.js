@@ -21,6 +21,25 @@ const Mutations = {
             }
         }, info)
     },
+    
+    async deleteItem(parent, args, ctx, info) {
+        const {id} = args
+        const item = await ctx.db.query.item({
+            where: {id: id},
+        }, `{
+                id
+                title
+            }`
+        )
+    
+        // todo check permision
+        
+        return ctx.db.mutation.deleteItem({
+            where: {
+                id: id
+            }
+        }, info)
+    }
 }
 
 module.exports = Mutations
