@@ -17,7 +17,18 @@ express.use((req, res, next) => {
             req.userId = userId
         }
     }
-    
+    next()
+})
+
+
+express.use( async (req, res, next) => {
+    if (!req.userId) {
+        next()
+    }
+    const user = await db.query.user({where: {id: req.userId}}, `{id, permissions, email, name}`)
+    if (user) {
+        req.user = user
+    }
     next()
 })
 

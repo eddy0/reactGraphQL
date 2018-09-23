@@ -5,8 +5,16 @@ const crypto = require('crypto')
 const Mutations = {
     //c
     async createItem(parent, args, ctx, info) {
+        if (!ctx.request.userId) {
+            throw new Error('you have to login to do')
+        }
         const item = await ctx.db.mutation.createItem({
             data: {
+                user: {
+                    connect: {
+                        id: ctx.request.userId,
+                    }
+                },
                 ...args,
             },
         }, info)
