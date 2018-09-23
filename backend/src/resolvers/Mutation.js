@@ -95,6 +95,7 @@ const Mutations = {
     },
     
     async requestReset(parent, args, ctx, info) {
+        const { transport, emailTemplate } = require('../mail')
         const user = await ctx.db.query.user({where: {email: args.email}})
         if (!user) {
             throw new Error(`no such user found for Email`)
@@ -115,9 +116,13 @@ const Mutations = {
                         resetTokenExpiry,
                     },
                 })
+                const options = emailTemplate({email: user.email, token: resetToken})
+                const mail = transport.sendMail(options)
                 res('you have sent the reset request')
             })
-        }).then(data => ({message: data }))
+        }).then(data => {
+            return {message: data }
+        })
     },
     
     async resetPassword(parent, args, ctx, info) {

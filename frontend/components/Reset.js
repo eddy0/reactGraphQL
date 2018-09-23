@@ -71,7 +71,7 @@ class Reset extends Component {
                     return (
                         <Form method='POST' onSubmit={(e) => this.handleSubmit(e, resetPassword)}>
                             <Error error={error} />
-                            <h2>Sign In For An Account</h2>
+                            <h2>Reset Your Password</h2>
                             {
                                 JSON.stringify(data)
                             }
