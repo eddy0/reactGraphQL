@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
 const Mutations = {
     //c
@@ -57,7 +58,7 @@ const Mutations = {
         }, info)
         const token = jwt.sign({userId: user.id}, process.env.APP_SECRET)
         ctx.response.cookie('token', token, {
-            httpOnly:true,
+            httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 365,
         })
         return user
@@ -68,22 +69,85 @@ const Mutations = {
         const user = await ctx.db.query.user({
             where: {
                 'email': args.email,
-            }
+            },
         })
         if (!user) {
             throw new Error(`no such user found for Email ${args.email}`)
         }
-        const valid = await bcrypt.compare(arg.password, user.password)
+        const valid = await bcrypt.compare(args.password, user.password)
         if (!valid) {
             throw new Error(`invalid password`)
         }
         const token = jwt.sign({userId: user.id}, process.env.APP_SECRET)
         
         ctx.response.cookie('token', token, {
-            httpOnly:true,
+            httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 365,
         })
         return user
+    },
+    
+    signout(parent, args, ctx, info) {
+        ctx.response.clearCookie('token')
+        return {
+            message: 'signed out',
+        }
+    },
+    
+    async requestReset(parent, args, ctx, info) {
+        const user = await ctx.db.query.user({where: {email: args.email}})
+        if (!user) {
+            throw new Error(`no such user found for Email`)
+        }
+        return new Promise((res, rej) => {
+            crypto.randomBytes(20, (err, buf) => {
+                if (err) {
+                    rej(err)
+                }
+                const resetToken = buf.toString('hex')
+                const resetTokenExpiry = Date.now() + 3600000
+                console.log('resetToken', resetToken)
+        
+                ctx.db.mutation.updateUser({
+                    where: {email: args.email},
+                    data: {
+                        resetToken,
+                        resetTokenExpiry,
+                    },
+                })
+                res('you have sent the reset request')
+            })
+        }).then(data => ({message: data }))
+    },
+    
+    async resetPassword(parent, args, ctx, info) {
+        if (args.password !== args.confirmPassword) {
+            throw new Error(`Password doesn't match`)
+        }
+        const [user] = await ctx.db.query.users({
+            where: {
+                resetToken: args.resetToken,
+                resetTokenExpiry_gte: Date.now() - 3600000,
+            },
+        })
+        if (!user) {
+            throw new Error(`token expired`)
+        }
+        const password = await bcrypt.hash(args.password, 10)
+        const updatedUser = await ctx.db.mutation.updateUser({
+            where: {email: user.email},
+            data: {
+                password,
+                resetToken: null,
+                resetTokenExpiry: null,
+            },
+        })
+        const token = jwt.sign({userId: updatedUser.id}, process.env.APP_SECRET)
+        ctx.response.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24 * 365,
+        })
+        return updatedUser
     },
     
 }

@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/eddy-zhang-ec25e7/sports/dev
-# timestamp: Sat Sep 22 2018 00:38:59 GMT-0700 (GMT-07:00)
+# timestamp: Sat Sep 22 2018 18:19:16 GMT-0700 (GMT-07:00)
 
 type AggregateItem {
   count: Int!
@@ -815,5 +815,6 @@ input UserWhereInput {
 
 input UserWhereUniqueInput {
   id: ID
+  email: String
   password: String
 }
