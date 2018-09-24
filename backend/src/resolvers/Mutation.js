@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
+const {hasPermission} = require('../utils')
 
 const Mutations = {
     //c
@@ -13,7 +14,7 @@ const Mutations = {
                 user: {
                     connect: {
                         id: ctx.request.userId,
-                    }
+                    },
                 },
                 ...args,
             },
@@ -38,13 +39,12 @@ const Mutations = {
         const {id} = args
         const item = await ctx.db.query.item({
                 where: {id: id},
-            }, `{
-                id
-                title
-            }`,
-        )
-        
-        // todo check permision
+            }, `{id, title, user}`,)
+        const ownItem = item.user.id === ctx.request.userId
+        const allowed = ctx.request.user.permissions.some((permission) => ['ADMIN', 'ITEMDELETE'].includes(permission))
+        if (!ownItem && !allowed) {
+            throw new Error(`you are not allowed`)
+        }
         
         return ctx.db.mutation.deleteItem({
             where: {
@@ -52,7 +52,6 @@ const Mutations = {
             },
         }, info)
     },
-    
     // user
     async signup(parent, args, ctx, info) {
         args.email = args.email.toLowerCase()
@@ -103,7 +102,7 @@ const Mutations = {
     },
     
     async requestReset(parent, args, ctx, info) {
-        const { transport, emailTemplate } = require('../mail')
+        const {transport, emailTemplate} = require('../mail')
         const user = await ctx.db.query.user({where: {email: args.email}})
         if (!user) {
             throw new Error(`no such user found for Email`)
@@ -116,7 +115,7 @@ const Mutations = {
                 const resetToken = buf.toString('hex')
                 const resetTokenExpiry = Date.now() + 3600000
                 console.log('resetToken', resetToken)
-        
+                
                 ctx.db.mutation.updateUser({
                     where: {email: args.email},
                     data: {
@@ -129,7 +128,7 @@ const Mutations = {
                 res('you have sent the reset request')
             })
         }).then(data => {
-            return {message: data }
+            return {message: data}
         })
     },
     
@@ -161,6 +160,28 @@ const Mutations = {
             maxAge: 1000 * 60 * 60 * 24 * 365,
         })
         return updatedUser
+    },
+    
+    async updatePermissions(parent, args, ctx, info) {
+        if (!ctx.request.userId) {
+            throw new Error(`please log in`)
+        }
+        const currentUser = await ctx.db.query.user({
+            where: {
+                id: ctx.request.userId,
+            },
+        }, info)
+        
+        hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE'])
+        await ctx.db.mutation.updateUser({
+            data: {
+                permissions: {
+                    set: args.permissions,
+                },
+            },
+            where: {id: args.userId},
+        }, info)
+        return currentUser
     },
     
 }

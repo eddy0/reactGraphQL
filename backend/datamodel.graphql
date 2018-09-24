@@ -1,4 +1,4 @@
-enum Permission {
+enum Permissions {
     ADMIN
     USER
     ITEMCREATE
@@ -14,7 +14,7 @@ type User {
     password: String! @unique
     resetToken: String
     resetTokenExpiry: String
-    permissions: [Permission]
+    permissions: [Permissions]
 }
 
 type Item {

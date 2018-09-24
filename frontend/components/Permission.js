@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {Query} from 'react-apollo'
 import gql from 'graphql-tag'
 import Error from './ErrorMessage'
-import Form from './styles/Form'
 import Table from './styles/Table'
 import UserItem from './UserItem'
 
@@ -34,8 +33,6 @@ class Permission extends Component {
         return (
             <Query query={ALL_USER_QUERY}>
                 {({data, loading, error}) => {
-                    console.log('data', data)
-                    
                     return (
                         <div>
                             <Error error={error} />
@@ -57,6 +54,7 @@ class Permission extends Component {
                                 </thead>
                                 <tbody>
                                     {
+                                        data && data.users &&
                                         data.users.map((user) => {
                                                 return <UserItem permissionOption={permissionOption} key={user.id} user={user}/>
                                             },
