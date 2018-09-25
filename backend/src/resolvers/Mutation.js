@@ -196,9 +196,11 @@ const Mutations = {
                 item: {id: args.id}
                 },
         }, info)
+        console.log('existingCartItem', existingCartItem)
+    
         if (existingCartItem && existingCartItem.length > 0) {
             return ctx.db.mutation.updateCartItem({
-                where: {id: existingCartItem.id},
+                where: {id: existingCartItem[0].id},
                 data: {quantity: existingCartItem.quantity + 1}
             })
         }
