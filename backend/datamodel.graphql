@@ -7,6 +7,8 @@ enum Permissions {
     PERMISSIONUPDATE
 }
 
+
+
 type User {
     id: ID! @unique
     name: String!
@@ -15,6 +17,7 @@ type User {
     resetToken: String
     resetTokenExpiry: String
     permissions: [Permissions]
+    cart: [CartItem!]!
 }
 
 type Item {
@@ -24,5 +27,12 @@ type Item {
     image: String,
     largeImage: String,
     price: Int!
+    user: User!
+}
+
+type CartItem {
+    id: ID! @unique
+    quantity: Int! @default(value: 1)
+    item: Item!
     user: User!
 }

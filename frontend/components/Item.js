@@ -8,6 +8,7 @@ import formatMoney from '../lib/formatMoney'
 import {Mutation} from 'react-apollo'
 import gql from 'graphql-tag'
 import {ALL_ITEMS_QUERY} from './Items'
+import AddToCart from './AddToCart'
 
 
 
@@ -81,7 +82,7 @@ class Item extends Component {
                                             edit
                                         </a>
                                     </Link>
-                                    <button>add to cart</button>
+                                    <AddToCart id={item.id}/>
                                     <button
                                         onClick={(e) => {
                                             const msg = 'are your sure you want to delete the message?'
