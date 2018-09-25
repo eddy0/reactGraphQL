@@ -37,6 +37,7 @@ class Cart extends Component {
                                                 <Supreme> Your Cart</Supreme>
                                                 <p>You Have __ items in your carts.</p>
                                             </header>
+                                            
                                             <footer>
                                                 <p>$10.00</p>
                                                 <SickButton>checkout</SickButton>

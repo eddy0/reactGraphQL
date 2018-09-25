@@ -187,11 +187,16 @@ const Mutations = {
         if (!userId) {
             throw new Error(`please log in`)
         }
-        const [existingCartItem] = await ctx.db.query.cartItems({
-            where: {id: userId},
-            item: {id: args.id}
-        })
-        if (existingCartItem) {
+        console.log('userId', userId)
+        console.log('args.id', args.id)
+    
+        const existingCartItem = await ctx.db.query.cartItems({
+            where: {
+                user: {id: userId},
+                item: {id: args.id}
+                },
+        }, info)
+        if (existingCartItem && existingCartItem.length > 0) {
             return ctx.db.mutation.updateCartItem({
                 where: {id: existingCartItem.id},
                 data: {quantity: existingCartItem.quantity + 1}
@@ -205,8 +210,8 @@ const Mutations = {
                 item: {
                     connect: { id: args.id}
                 },
-            }
-        })
+            }, 
+        }, info)
     }
     
 }
