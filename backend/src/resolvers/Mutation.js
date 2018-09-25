@@ -19,8 +19,6 @@ const Mutations = {
                 ...args,
             },
         }, info)
-        console.log('item', item)
-        
         return item
     },
     // u
@@ -39,7 +37,7 @@ const Mutations = {
         const {id} = args
         const item = await ctx.db.query.item({
                 where: {id: id},
-            }, `{id, title, user}`,)
+            }, `{id, title, user{id}}`,)
         const ownItem = item.user.id === ctx.request.userId
         const allowed = ctx.request.user.permissions.some((permission) => ['ADMIN', 'ITEMDELETE'].includes(permission))
         if (!ownItem && !allowed) {
