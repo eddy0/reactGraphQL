@@ -120,7 +120,7 @@ const Mutations = {
                         resetToken,
                         resetTokenExpiry,
                     },
-                })
+                }, info)
                 const options = emailTemplate({email: user.email, token: resetToken})
                 const mail = transport.sendMail(options)
                 res('you have sent the reset request')
@@ -151,7 +151,7 @@ const Mutations = {
                 resetToken: null,
                 resetTokenExpiry: null,
             },
-        })
+        }, info)
         const token = jwt.sign({userId: updatedUser.id}, process.env.APP_SECRET)
         ctx.response.cookie('token', token, {
             httpOnly: true,
@@ -187,8 +187,6 @@ const Mutations = {
         if (!userId) {
             throw new Error(`please log in`)
         }
-        console.log('userId', userId)
-        console.log('args.id', args.id)
     
         const existingCartItem = await ctx.db.query.cartItems({
             where: {
@@ -196,12 +194,11 @@ const Mutations = {
                 item: {id: args.id}
                 },
         }, info)
-        console.log('existingCartItem', existingCartItem)
     
         if (existingCartItem && existingCartItem.length > 0) {
             return ctx.db.mutation.updateCartItem({
                 where: {id: existingCartItem[0].id},
-                data: {quantity: existingCartItem.quantity + 1}
+                data: {quantity: existingCartItem[0].quantity + 1}
             })
         }
         return ctx.db.mutation.createCartItem({
@@ -214,7 +211,27 @@ const Mutations = {
                 },
             }, 
         }, info)
+    },
+    
+    async removeFromCart(parent, args, ctx, info) {
+        const cartItem = await ctx.db.query.cartItem({
+            where: {
+                id: args.id
+            }
+        }, `{id, user{id}}`)
+        if (!cartItem) {
+            throw new Error(`no cart item found`)
+        }
+        if (cartItem.user.id !== ctx.request.userId) {
+            throw new Error(`no user id`)
+        }
+        return ctx.db.mutation.deleteCartItem({
+            where: {
+                id: args.id
+            }
+        }, info)
     }
+    
     
 }
 

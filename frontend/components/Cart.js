@@ -7,6 +7,8 @@ import CloseButton from './styles/CloseButton'
 import SickButton from './styles/SickButton'
 import User from './User'
 import CartItem from './CartItem'
+import calcTotalPrice from '../lib/calcTotalPrice'
+import formatMoney from '../lib/formatMoney'
 
 
 
@@ -59,7 +61,7 @@ class Cart extends Component {
                                                             </ul>
                                                             
                                                             <footer>
-                                                                <p>$10.00</p>
+                                                                <p> {formatMoney(calcTotalPrice(me.cart))}</p>
                                                                 <SickButton>checkout</SickButton>
                                                             </footer>
                                                         </CartStyles>

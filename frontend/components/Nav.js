@@ -5,6 +5,7 @@ import NavStyles from './styles/NavStyles'
 import User from './User'
 import Signout from './Signout'
 import {TOGGLE_CART_MUTATION} from './Cart'
+import CartCount from './CartCount'
 
 
 
@@ -37,7 +38,13 @@ const Nav = () => {
                                         {
                                             (toggleCart) =>{
                                                 return (
-                                                    <button onClick={toggleCart}>my cart</button>
+                                                    <button onClick={toggleCart}>
+                                                        my cart
+                                                        <CartCount count={data.me.cart.reduce((time, item) => {
+                                                            return time + item.quantity
+                                                        }, 0)}
+                                                        />
+                                                    </button>
                                                 )
                                             }
                                         }
