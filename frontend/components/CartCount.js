@@ -1,9 +1,32 @@
 import React, {Component} from 'react'
-import gql from 'graphql-tag'
-import {Mutation} from 'react-apollo'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import {CURRENT_USER_QUERY} from './User'
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
+
+
+
+const AnimationStyles = styled.span`
+  position: relative;
+  .count {
+    display: block;
+    position:relative;
+    transition: all 0.3s;
+    backface-visibility: hidden;
+  }
+  .count-enter {
+    transform: rotateX(0.5turn);
+  }
+  .count-enter-active {
+    transform: rotateX(0);
+  }
+  .count-exit {
+    top: 0;
+    position:absolute;
+    transform: rotateX(0);
+  }
+  .count-exit-active {
+    transform: rotateX(0.5turn);
+  }
+`
 
 const Dot = styled.div`
   background-color:${props => props.theme.red};
@@ -18,14 +41,20 @@ const Dot = styled.div`
   font-variant-numeric: tabular-nums;
 `
 
-
-const CartCount = ({count}) =>  {
-        return (
-            <Dot>
-                {count}
-            </Dot>
-        )
+const CartCount = ({count}) => {
+    return (
+        <AnimationStyles>
+            <TransitionGroup>
+                <CSSTransition unMountOnExit className='count' classNames='count' key={count} timeout={{
+                    enter: 4000, exit: 4000,
+                }}>
+                    <Dot>
+                        {count}
+                    </Dot>
+                </CSSTransition>
+            </TransitionGroup>
+        </AnimationStyles>
+    )
 }
-
 
 export default CartCount
