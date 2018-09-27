@@ -9,6 +9,7 @@ import User from './User'
 import CartItem from './CartItem'
 import calcTotalPrice from '../lib/calcTotalPrice'
 import formatMoney from '../lib/formatMoney'
+import TakeMyMoney from './TakeMyMoney'
 
 
 
@@ -34,7 +35,6 @@ class Cart extends Component {
                             return null
                         }
                         const me = data.me
-    
                         return (
                             <Mutation mutation={TOGGLE_CART_MUTATION}>
                                 {
@@ -62,7 +62,9 @@ class Cart extends Component {
                                                             
                                                             <footer>
                                                                 <p> {formatMoney(calcTotalPrice(me.cart))}</p>
-                                                                <SickButton>checkout</SickButton>
+                                                                <TakeMyMoney>
+                                                                    <SickButton>checkout</SickButton>
+                                                                </TakeMyMoney>
                                                             </footer>
                                                         </CartStyles>
                                                     )
