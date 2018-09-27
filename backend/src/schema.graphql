@@ -58,4 +58,5 @@ type Query {
     user(where: UserWhereInput): User!
     me: User
     users: [User]!
+    order(id: ID!): Order
 }
