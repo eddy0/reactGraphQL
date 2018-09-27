@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
+const stripe = require('../stripe')
 const {hasPermission} = require('../utils')
 
 const Mutations = {
@@ -230,8 +231,27 @@ const Mutations = {
                 id: args.id
             }
         }, info)
-    }
+    },
     
+    async createOrder(parent, args, ctx, info)   {
+        const {userId} = ctx.request
+        if (!userId) {
+            throw new Error(`please log in`)
+        }
+        const user = await ctx.db.query.user({where: {id: userId}}, `{id, name, email, cart{id, quantity, item{title, price, id, description, image}} }`)
+        console.log('user', user, user.cart)
+    
+        const amount = user.cart.reduce((total, cart) => {
+            return total + cart.item.price * cart.quantity
+        }, 0)
+        console.log('amount', amount)
+        const charge = await stripe.charges.create({
+            amount,
+            currency: 'USD',
+            source: args.token,
+        })
+    
+    }
     
 }
 
