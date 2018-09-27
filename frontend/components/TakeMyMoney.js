@@ -58,7 +58,7 @@ class TakeMyMoney extends Component {
                                                 amount={calcTotalPrice(me.cart)}
                                                 name='sports'
                                                 description={`order of ${totalItems(me.cart)} items`}
-                                                image={me.cart.length && me.cart[0].item && me.cart[0].item.image}
+                                                image={ me.cart.length && me.cart[0].item && me.cart[0].item.image || ''}
                                                 stripeKey='pk_test_Vg4EEDemXSj71tAVGIBRLU5W'
                                                 currency='USD'
                                                 email={me.email}

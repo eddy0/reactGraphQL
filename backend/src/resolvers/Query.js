@@ -45,7 +45,13 @@ const Query = {
             throw new Error('you are not authed to check this page ')
         }
         return order
-    }
+    },
+    async orders(parent, args, ctx, info) {
+        const userId = confirmedLogin(ctx)
+        return  await ctx.db.query.orders({
+            where: {user: {id: userId}}
+        }, info)
+    },
     // async items(parent, args, ctx, info) {
     //     const items = await ctx.db.query.items()
     //     return items
