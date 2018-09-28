@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "next -p 7777",
     "build": "next build",
-    "start": "next start",
-    "test": "jest --watch"
+    "start": "next start -p $PORT",
+    "test": "jest --watch",
+    "heroku": "next build"
   },
   "author": "",
   "license": "ISC",
