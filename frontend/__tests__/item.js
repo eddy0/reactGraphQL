@@ -1,6 +1,6 @@
 import Item from '../components/Items'
 import {shallow} from 'enzyme'
-
+import toJSON from 'enzyme-to-json'
 
 
 const fakeItem = {
@@ -12,11 +12,19 @@ const fakeItem = {
     largeImage: 'largedog.jpg'
 }
 
+
 describe('item', function() {
     it('should render and display properly', function() {
         const wrapper = shallow(<Item item={fakeItem}/>)
-        const PriceTag = wrapper.dive().find('PriceTag')
-        console.log(PriceTag.debug())
-    
+        const PriceTag = wrapper.find('PriceTag')
+
+    })
+})
+
+describe('snapshot', function() {
+    it('should be a snapshot', function() {
+        const wrapper = shallow(<Item item={fakeItem}/>)
+        expect(toJSON(wrapper)).toMatchSnapshot()
+        
     })
 })
