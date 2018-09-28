@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "test": "jest --watch",
-    "heroku": "next build"
+    "heroku-postbuild": "next build"
   },
   "author": "",
   "license": "ISC",
